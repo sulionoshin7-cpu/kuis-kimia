@@ -1,0 +1,1718 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="theme-color" content="#0a1128" />
+<title>Siapa Mau Jadi Juara Kimia — by Suliono</title>
+
+<!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+<style>
+/* =========================================================
+   RESET & BASE
+   ========================================================= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  height: 100%;
+  font-family: 'Poppins', system-ui, sans-serif;
+  background: radial-gradient(circle at 50% 20%, #122152 0%, #0a1128 60%, #05081a 100%);
+  color: #ffffff;
+  font-size: 14px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+body { min-height: 100vh; }
+
+button { font-family: inherit; cursor: pointer; border: none; outline: none; }
+button:disabled { cursor: not-allowed; }
+
+/* =========================================================
+   BACKGROUND CANVAS (Three.js)
+   ========================================================= */
+#bg-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  display: block;
+  pointer-events: none;
+}
+
+/* =========================================================
+   APP CONTAINER (Mobile View)
+   ========================================================= */
+#app {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 520px;
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 12px 12px 80px 12px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* =========================================================
+   PAGE TRANSITIONS
+   ========================================================= */
+.page {
+  display: none;
+  flex-direction: column;
+  flex: 1;
+  animation: fadeSlide 0.4s ease;
+}
+.page.active { display: flex; }
+
+@keyframes fadeSlide {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+.app-footer {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 520px;
+  text-align: center;
+  font-size: 11px;
+  color: #7f8db8;
+  padding: 8px 0;
+  background: linear-gradient(180deg, transparent, rgba(5,8,26,0.9) 40%);
+  z-index: 5;
+  pointer-events: none;
+}
+
+/* =========================================================
+   HOME PAGE
+   ========================================================= */
+.home-hero {
+  margin-top: 24px;
+  text-align: center;
+  padding: 24px 12px;
+  background: linear-gradient(180deg, rgba(244,196,48,0.08), rgba(244,196,48,0));
+  border: 1px solid rgba(244,196,48,0.3);
+  border-radius: 20px;
+  box-shadow: 0 0 40px rgba(244,196,48,0.15) inset;
+}
+
+.home-badge {
+  display: inline-block;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: #f4c430;
+  border: 1px solid #f4c430;
+  padding: 3px 10px;
+  border-radius: 20px;
+  margin-bottom: 12px;
+}
+
+.home-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 22px;
+  font-weight: 900;
+  line-height: 1.2;
+  background: linear-gradient(180deg, #ffe888, #f4c430, #b8860b);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 20px rgba(244,196,48,0.4);
+  margin-bottom: 4px;
+}
+.home-title .big { display: block; font-size: 30px; }
+
+.home-sub {
+  color: #cfd6ee;
+  font-size: 12px;
+  margin-top: 8px;
+  line-height: 1.5;
+}
+
+.home-card {
+  margin-top: 20px;
+  background: rgba(26,40,82,0.7);
+  border: 1px solid rgba(244,196,48,0.35);
+  border-radius: 16px;
+  padding: 18px 16px;
+  backdrop-filter: blur(6px);
+}
+
+.home-label {
+  font-size: 12px;
+  color: #f4c430;
+  font-weight: 600;
+  margin-bottom: 8px;
+  letter-spacing: 1px;
+}
+
+.home-input {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 2px solid rgba(244,196,48,0.4);
+  background: #0d1832;
+  color: #fff;
+  font-size: 15px;
+  font-family: inherit;
+  outline: none;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+.home-input:focus {
+  border-color: #f4c430;
+  box-shadow: 0 0 0 3px rgba(244,196,48,0.2);
+}
+.home-input::placeholder { color: #6d7a9c; }
+
+.btn-primary {
+  width: 100%;
+  margin-top: 14px;
+  padding: 16px;
+  min-height: 52px;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #ffe27a, #f4c430 50%, #b8860b);
+  color: #0a1128;
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: 1px;
+  box-shadow: 0 6px 0 #7a5a08, 0 8px 20px rgba(244,196,48,0.35);
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+.btn-primary:active:not(:disabled) {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 #7a5a08, 0 4px 12px rgba(244,196,48,0.3);
+}
+.btn-primary:disabled { opacity: 0.5; }
+
+.btn-secondary {
+  width: 100%;
+  margin-top: 10px;
+  padding: 14px;
+  min-height: 48px;
+  border-radius: 12px;
+  background: rgba(26,40,82,0.9);
+  color: #f4c430;
+  font-weight: 600;
+  font-size: 14px;
+  border: 2px solid rgba(244,196,48,0.5);
+  transition: background 0.15s;
+}
+.btn-secondary:active { background: rgba(244,196,48,0.15); }
+
+.aturan {
+  margin-top: 18px;
+  font-size: 12px;
+  color: #a9b5d6;
+  line-height: 1.7;
+  background: rgba(13,24,50,0.6);
+  border-left: 3px solid #f4c430;
+  padding: 12px 14px;
+  border-radius: 8px;
+}
+.aturan b { color: #f4c430; }
+
+/* =========================================================
+   QUIZ PAGE
+   ========================================================= */
+.quiz-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.stage-label {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: #f4c430;
+  letter-spacing: 1.5px;
+  background: rgba(244,196,48,0.12);
+  border: 1px solid rgba(244,196,48,0.5);
+  padding: 6px 10px;
+  border-radius: 20px;
+}
+
+.timer-badge {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 16px;
+  font-weight: 900;
+  color: #fff;
+  background: linear-gradient(180deg, #1a2852, #0d1832);
+  border: 2px solid #f4c430;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 12px rgba(244,196,48,0.4);
+  transition: background 0.3s, border-color 0.3s;
+}
+.timer-badge.danger {
+  background: linear-gradient(180deg, #e63946, #9a1c25);
+  border-color: #ff8a8a;
+  animation: pulseTimer 0.7s infinite;
+}
+@keyframes pulseTimer {
+  0%,100% { box-shadow: 0 0 12px rgba(230,57,70,0.6); }
+  50%     { box-shadow: 0 0 22px rgba(230,57,70,1); }
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: rgba(13,24,50,0.9);
+  border: 1px solid rgba(244,196,48,0.25);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #f4c430, #ffe888);
+  border-radius: 8px;
+  transition: width 0.4s ease;
+  box-shadow: 0 0 10px rgba(244,196,48,0.8);
+}
+
+.q-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.q-number { font-size: 12px; color: #a9b5d6; letter-spacing: 0.5px; }
+.prize-current {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 15px;
+  font-weight: 900;
+  color: #ffe888;
+  text-shadow: 0 0 10px rgba(244,196,48,0.6);
+}
+
+/* ---------- Lifelines ---------- */
+.lifelines {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  justify-content: center;
+}
+.lifeline {
+  flex: 1;
+  min-height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #1a2852, #0d1832);
+  color: #f4c430;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  border: 2px solid #f4c430;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  transition: transform 0.1s, opacity 0.2s;
+  padding: 4px 6px;
+  text-align: center;
+  line-height: 1.1;
+}
+.lifeline:active:not(:disabled) { transform: scale(0.96); }
+.lifeline.used {
+  opacity: 0.3;
+  text-decoration: line-through;
+  filter: grayscale(1);
+  border-color: #6d7a9c;
+  color: #6d7a9c;
+}
+.lifeline .emoji { font-size: 16px; }
+
+/* ---------- Question box ---------- */
+.question-box {
+  background: linear-gradient(180deg, rgba(26,40,82,0.9), rgba(13,24,50,0.95));
+  border: 2px solid #f4c430;
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 14px;
+  font-size: 14.5px;
+  line-height: 1.55;
+  min-height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-shadow: 0 0 24px rgba(244,196,48,0.15), 0 0 24px rgba(244,196,48,0.05) inset;
+  position: relative;
+}
+.question-materi {
+  position: absolute;
+  top: -10px;
+  left: 12px;
+  background: #f4c430;
+  color: #0a1128;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 10px;
+  letter-spacing: 0.5px;
+}
+
+/* ---------- Answers ---------- */
+.answers { display: flex; flex-direction: column; gap: 10px; }
+
+.answer-btn {
+  position: relative;
+  width: 100%;
+  min-height: 58px;
+  padding: 3px;
+  background: linear-gradient(135deg, #f4c430, #b8860b);
+  clip-path: polygon(5% 0%, 95% 0%, 100% 50%, 95% 100%, 5% 100%, 0% 50%);
+  transition: transform 0.1s, opacity 0.3s;
+}
+.answer-btn:active:not(:disabled) { transform: scale(0.985); }
+.answer-btn .inner {
+  width: 100%;
+  height: 100%;
+  min-height: 52px;
+  background: linear-gradient(180deg, #1a2852, #0d1832);
+  clip-path: polygon(5% 0%, 95% 0%, 100% 50%, 95% 100%, 5% 100%, 0% 50%);
+  display: flex;
+  align-items: center;
+  padding: 8px 22px;
+  gap: 10px;
+  color: #fff;
+  font-weight: 600;
+  font-size: 13.5px;
+  text-align: left;
+  line-height: 1.3;
+  transition: background 0.25s;
+}
+.answer-btn .letter {
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 900;
+  color: #f4c430;
+  font-size: 15px;
+  flex-shrink: 0;
+  min-width: 20px;
+}
+.answer-btn .text { flex: 1; }
+
+.answer-btn.correct .inner { background: linear-gradient(180deg, #1db954, #0d7a33); }
+.answer-btn.correct .letter { color: #fff; }
+.answer-btn.wrong .inner { background: linear-gradient(180deg, #e63946, #9a1c25); }
+.answer-btn.wrong .letter { color: #fff; }
+.answer-btn.dim { opacity: 0.28; pointer-events: none; }
+
+/* ---------- Hint box ---------- */
+.hint-box {
+  margin-top: 12px;
+  background: rgba(244,196,48,0.1);
+  border-left: 4px solid #f4c430;
+  padding: 12px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  color: #ffe888;
+  line-height: 1.55;
+  animation: fadeSlide 0.35s ease;
+}
+.hint-box b { color: #fff; display: block; margin-bottom: 4px; }
+
+/* ---------- Poll Modal ---------- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(5,8,26,0.85);
+  backdrop-filter: blur(4px);
+  z-index: 20;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.modal-overlay.active { display: flex; animation: fadeSlide 0.25s ease; }
+
+.poll-card {
+  width: 100%;
+  max-width: 420px;
+  background: linear-gradient(180deg, #1a2852, #0d1832);
+  border: 2px solid #f4c430;
+  border-radius: 16px;
+  padding: 20px 16px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+}
+.poll-title {
+  font-family: 'Orbitron', sans-serif;
+  color: #f4c430;
+  font-size: 13px;
+  letter-spacing: 1.5px;
+  text-align: center;
+  margin-bottom: 4px;
+}
+.poll-sub { text-align: center; font-size: 11px; color: #a9b5d6; margin-bottom: 16px; }
+.poll-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.poll-label {
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 900;
+  width: 20px;
+  color: #f4c430;
+}
+.poll-bar-wrap {
+  flex: 1;
+  height: 22px;
+  background: rgba(13,24,50,0.9);
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid rgba(244,196,48,0.25);
+}
+.poll-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #4fc3f7, #1a2852);
+  transition: width 0.9s cubic-bezier(.2,.9,.3,1);
+  border-radius: 6px;
+}
+.poll-bar.top { background: linear-gradient(90deg, #f4c430, #b8860b); }
+.poll-pct {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 12px;
+  color: #fff;
+  min-width: 42px;
+  text-align: right;
+}
+.modal-close {
+  width: 100%;
+  margin-top: 12px;
+  min-height: 44px;
+  border-radius: 10px;
+  background: linear-gradient(180deg, #ffe27a, #f4c430);
+  color: #0a1128;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+/* =========================================================
+   RESULT PAGE
+   ========================================================= */
+.result-hero {
+  text-align: center;
+  padding: 22px 16px 18px;
+  border-radius: 18px;
+  margin-top: 20px;
+  background: linear-gradient(180deg, rgba(244,196,48,0.15), rgba(244,196,48,0.02));
+  border: 1px solid rgba(244,196,48,0.4);
+}
+.result-emoji { font-size: 46px; line-height: 1; }
+.result-status {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 20px;
+  font-weight: 900;
+  margin-top: 6px;
+  color: #ffe888;
+  letter-spacing: 1px;
+  text-shadow: 0 0 14px rgba(244,196,48,0.6);
+}
+.result-status.lose { color: #ff8a8a; text-shadow: 0 0 14px rgba(230,57,70,0.6); }
+
+.result-score {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 34px;
+  font-weight: 900;
+  color: #f4c430;
+  margin-top: 10px;
+  text-shadow: 0 0 20px rgba(244,196,48,0.7);
+}
+.result-score-label { font-size: 11px; color: #a9b5d6; letter-spacing: 2px; }
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 16px;
+}
+.stat-card {
+  background: rgba(26,40,82,0.75);
+  border: 1px solid rgba(244,196,48,0.3);
+  border-radius: 12px;
+  padding: 12px;
+  text-align: center;
+}
+.stat-card .k { font-size: 10.5px; color: #a9b5d6; letter-spacing: 1px; }
+.stat-card .v {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #ffe888;
+  margin-top: 4px;
+}
+
+.ranking-box {
+  margin-top: 18px;
+  background: rgba(13,24,50,0.75);
+  border: 1px solid rgba(244,196,48,0.25);
+  border-radius: 14px;
+  padding: 14px;
+}
+.ranking-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 11.5px;
+  color: #f4c430;
+  letter-spacing: 1.5px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+.rank-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 6px;
+  border-bottom: 1px dashed rgba(244,196,48,0.15);
+  font-size: 12.5px;
+}
+.rank-row:last-child { border-bottom: none; }
+.rank-no {
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 900;
+  color: #f4c430;
+  width: 22px;
+}
+.rank-name { flex: 1; color: #fff; }
+.rank-score { color: #ffe888; font-weight: 700; }
+.rank-empty { text-align: center; color: #6d7a9c; font-size: 12px; padding: 6px; }
+
+/* =========================================================
+   TOAST / NOTIFICATION
+   ========================================================= */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 90px;
+  transform: translateX(-50%) translateY(20px);
+  background: #f4c430;
+  color: #0a1128;
+  padding: 10px 18px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 13px;
+  z-index: 100;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s, transform 0.3s;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast.error { background: #e63946; color: #fff; }
+
+/* =========================================================
+   RESPONSIVE TWEAKS
+   ========================================================= */
+@media (max-width: 360px) {
+  .home-title { font-size: 19px; }
+  .home-title .big { font-size: 25px; }
+  .question-box { font-size: 13.5px; padding: 14px; }
+  .answer-btn .inner { font-size: 12.5px; padding: 8px 16px; }
+  .lifeline { font-size: 11px; }
+}
+</style>
+</head>
+
+<body>
+<!-- Background WebGL -->
+<canvas id="bg-canvas"></canvas>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- ================= APP ================= -->
+<div id="app">
+
+  <!-- ============ HALAMAN HOME ============ -->
+  <section id="page-home" class="page active">
+    <div class="home-hero">
+      <div class="home-badge">KIMIA • KELAS XII</div>
+      <h1 class="home-title">
+        SIAPA MAU JADI
+        <span class="big">JUARA KIMIA</span>
+      </h1>
+      <p class="home-sub">15 Soal • 3 Stage • 3 Bantuan<br/>Kelas X · XI · XII</p>
+    </div>
+
+    <div class="home-card">
+      <div class="home-label">👤 NAMA SISWA</div>
+      <input
+        type="text"
+        id="input-nama"
+        class="home-input"
+        placeholder="Tulis nama lengkap..."
+        maxlength="40"
+        autocomplete="off"
+      />
+      <button class="btn-primary" id="btn-mulai">▶ MULAI PERMAINAN</button>
+    </div>
+
+    <div class="aturan">
+      <b>Aturan:</b><br/>
+      • 15 soal, nilai naik dari <b>1</b> hingga <b>100 (Nilai Sempurna)</b>.<br/>
+      • Pilihan jawaban <b>diacak</b> setiap permainan dimulai.<br/>
+      • <b>Nilai aman</b> di soal 5 (nilai 10) & soal 10 (nilai 50).<br/>
+      • 3 bantuan: <b>50:50</b>, <b>Tanya Guru</b>, <b>Polling</b> (masing-masing 1×).<br/>
+      • Waktu 30 detik per soal. Jawaban salah / waktu habis = permainan berakhir.
+    </div>
+
+    <button class="btn-secondary" id="btn-unduh-home" style="margin-top:18px;">
+      ⬇️ Unduh Riwayat (.json)
+    </button>
+  </section>
+
+  <!-- ============ HALAMAN KUIS ============ -->
+  <section id="page-quiz" class="page">
+    <div class="quiz-top">
+      <span class="stage-label" id="stage-label">STAGE 1 • DASAR</span>
+      <div class="timer-badge" id="timer-badge"><span id="timer-text">30</span></div>
+    </div>
+
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+
+    <div class="q-info">
+      <span class="q-number" id="q-number">Soal 1 / 15</span>
+      <span class="prize-current" id="prize-current">Nilai 1 / 100</span>
+    </div>
+
+    <div class="lifelines">
+      <button class="lifeline" id="ll-fifty" title="Hapus 2 jawaban salah">
+        <span>50:50</span>
+      </button>
+      <button class="lifeline" id="ll-guru" title="Tanya Guru (petunjuk)">
+        <span class="emoji">👨‍🏫</span><span>Guru</span>
+      </button>
+      <button class="lifeline" id="ll-poll" title="Polling penonton">
+        <span class="emoji">📊</span><span>Poll</span>
+      </button>
+    </div>
+
+    <div class="question-box" id="question-box">
+      <span class="question-materi" id="question-materi">MATERI</span>
+      <span id="question-text">Memuat soal...</span>
+    </div>
+
+    <div class="answers" id="answers"></div>
+
+    <div class="hint-box" id="hint-box" style="display:none;">
+      <b>💡 Petunjuk Guru</b>
+      <span id="hint-text"></span>
+    </div>
+  </section>
+
+  <!-- ============ HALAMAN HASIL ============ -->
+  <section id="page-result" class="page">
+    <div class="result-hero">
+      <div class="result-emoji" id="result-emoji">🎉</div>
+      <div class="result-status" id="result-status">SELAMAT!</div>
+      <div class="result-score-label" id="result-name-label">NAMA SISWA</div>
+      <div class="result-score" id="result-score">0 / 100</div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="k">SOAL BENAR</div>
+        <div class="v" id="stat-benar">0/15</div>
+      </div>
+      <div class="stat-card">
+        <div class="k">STAGE TERCAPAI</div>
+        <div class="v" id="stat-stage">0/3</div>
+      </div>
+      <div class="stat-card">
+        <div class="k">WAKTU</div>
+        <div class="v" id="stat-waktu">0:00</div>
+      </div>
+      <div class="stat-card">
+        <div class="k">BANTUAN DIPAKAI</div>
+        <div class="v" id="stat-lifeline">0/3</div>
+      </div>
+    </div>
+
+    <div class="ranking-box">
+      <div class="ranking-title">🏆 PERINGKAT TOP 5</div>
+      <div id="ranking-list"><div class="rank-empty">Belum ada riwayat.</div></div>
+    </div>
+
+    <button class="btn-primary" id="btn-main-lagi" style="margin-top:18px;">
+      🔄 MAIN LAGI
+    </button>
+    <button class="btn-secondary" id="btn-unduh-result">
+      ⬇️ Unduh Hasil (.json)
+    </button>
+  </section>
+
+</div>
+
+<!-- Footer -->
+<div class="app-footer">v1.2 • Suliono - Guru Kimia</div>
+
+<!-- ============ POLL MODAL ============ -->
+<div class="modal-overlay" id="poll-modal">
+  <div class="poll-card">
+    <div class="poll-title">📊 HASIL POLLING PENONTON</div>
+    <div class="poll-sub">Perkiraan persentase pilihan siswa</div>
+    <div id="poll-bars"></div>
+    <button class="modal-close" id="poll-close">TUTUP</button>
+  </div>
+</div>
+
+<!-- ============ THREE.JS CDN ============ -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<script>
+/* =====================================================================
+   APLIKASI: SIAPA MAU JADI JUARA KIMIA
+   Author : Suliono - Guru Kimia
+   Versi  : 1.2
+   Fitur  : Nilai 1-100 + Acak Posisi Jawaban A/B/C/D
+   ===================================================================== */
+
+/* ============ KONFIGURASI ============ */
+const STORAGE_KEY = 'kimiakuiz_data';
+const VERSION = '1.2';
+const GURU = 'Suliono';
+const MAPEL = 'Kimia';
+const TIMER_DETIK = 30;
+
+/* Daftar NILAI per level (1-15) — skala 1 s.d. 100 */
+const HADIAH = [
+  1, 2, 4, 6, 10,      /* Stage 1 — Dasar    */
+  15, 22, 30, 40, 50,  /* Stage 2 — Menengah */
+  60, 70, 80, 90, 100  /* Stage 3 — Mahir    */
+];
+
+/* ============ SOAL DEFAULT ============ */
+const DEFAULT_QUESTIONS = [
+  /* ---- STAGE 1 : KELAS X ---- */
+  {
+    id: 1, stage: 1, kelas: 'X', materi: 'Konfigurasi Elektron',
+    pertanyaan: 'Atom dengan nomor atom 17 memiliki konfigurasi elektron...',
+    pilihan: [
+      '1s² 2s² 2p⁶ 3s² 3p⁵',
+      '1s² 2s² 2p⁶ 3s² 3p⁶',
+      '1s² 2s² 2p⁶ 3s² 3p⁴',
+      '1s² 2s² 2p⁶ 3s² 3p³'
+    ],
+    jawabanBenar: 0,
+    hint: 'Total elektron = 17. Isi orbital mengikuti urutan Aufbau: 1s → 2s → 2p → 3s → 3p.',
+    hadiah: 1
+  },
+  {
+    id: 2, stage: 1, kelas: 'X', materi: 'Tabel Periodik',
+    pertanyaan: 'Unsur dengan konfigurasi elektron [Ne] 3s² 3p³ terletak pada golongan dan periode...',
+    pilihan: [
+      'Golongan VA, periode 3',
+      'Golongan IIIA, periode 3',
+      'Golongan VA, periode 2',
+      'Golongan VIIA, periode 3'
+    ],
+    jawabanBenar: 0,
+    hint: 'Elektron valensi 3s² 3p³ = 5 elektron → golongan VA. Kulit terluar n=3 → periode 3.',
+    hadiah: 2
+  },
+  {
+    id: 3, stage: 1, kelas: 'X', materi: 'Ikatan Kimia',
+    pertanyaan: 'Ikatan yang terbentuk antara atom Na (Z=11) dan Cl (Z=17) adalah...',
+    pilihan: ['Ikatan ion', 'Ikatan kovalen', 'Ikatan logam', 'Ikatan hidrogen'],
+    jawabanBenar: 0,
+    hint: 'Na cenderung melepas 1 elektron, Cl cenderung menerima 1 elektron. Serah-terima elektron = ikatan ion.',
+    hadiah: 4
+  },
+  {
+    id: 4, stage: 1, kelas: 'X', materi: 'Hukum Dasar Kimia',
+    pertanyaan: 'Hukum kekekalan massa (Lavoisier) menyatakan bahwa...',
+    pilihan: [
+      'Massa zat sebelum dan sesudah reaksi sama',
+      'Volume gas sebanding dengan jumlah mol',
+      'Perbandingan massa unsur dalam senyawa tetap',
+      'Tekanan gas berbanding terbalik dengan volume'
+    ],
+    jawabanBenar: 0,
+    hint: 'Lavoisier: massa total zat sebelum reaksi = massa total zat setelah reaksi.',
+    hadiah: 6
+  },
+  {
+    id: 5, stage: 1, kelas: 'X', materi: 'Stoikiometri',
+    pertanyaan: 'Jumlah mol dalam 36 gram H₂O (Mr = 18) adalah...',
+    pilihan: ['2 mol', '0,5 mol', '1 mol', '18 mol'],
+    jawabanBenar: 0,
+    hint: 'mol = massa / Mr = 36 / 18.',
+    hadiah: 10
+  },
+
+  /* ---- STAGE 2 : KELAS XI ---- */
+  {
+    id: 6, stage: 2, kelas: 'XI', materi: 'Termokimia',
+    pertanyaan: 'Pada reaksi eksoterm, pernyataan yang benar adalah...',
+    pilihan: [
+      'ΔH negatif, kalor dilepas ke lingkungan',
+      'ΔH positif, kalor diserap dari lingkungan',
+      'ΔH negatif, kalor diserap dari lingkungan',
+      'ΔH positif, kalor dilepas ke lingkungan'
+    ],
+    jawabanBenar: 0,
+    hint: 'Eksoterm = keluar panas. Sistem melepas kalor, entalpi turun, ΔH < 0.',
+    hadiah: 15
+  },
+  {
+    id: 7, stage: 2, kelas: 'XI', materi: 'Laju Reaksi',
+    pertanyaan: 'Faktor berikut yang TIDAK mempengaruhi laju reaksi adalah...',
+    pilihan: ['Warna zat', 'Konsentrasi', 'Suhu', 'Katalis'],
+    jawabanBenar: 0,
+    hint: 'Warna adalah sifat fisik, bukan faktor kinetika. Laju dipengaruhi konsentrasi, suhu, luas permukaan, dan katalis.',
+    hadiah: 22
+  },
+  {
+    id: 8, stage: 2, kelas: 'XI', materi: 'Kesetimbangan Kimia',
+    pertanyaan: 'Untuk reaksi N₂(g) + 3H₂(g) ⇌ 2NH₃(g), jika tekanan diperbesar, kesetimbangan akan...',
+    pilihan: [
+      'Bergeser ke kanan (ke arah NH₃)',
+      'Bergeser ke kiri (ke arah N₂ dan H₂)',
+      'Tidak bergeser',
+      'Reaksi berhenti'
+    ],
+    jawabanBenar: 0,
+    hint: 'Prinsip Le Chatelier: tekanan naik → kesetimbangan bergeser ke sisi dengan jumlah mol gas lebih kecil. Kiri 4 mol, kanan 2 mol.',
+    hadiah: 30
+  },
+  {
+    id: 9, stage: 2, kelas: 'XI', materi: 'Asam-Basa',
+    pertanyaan: 'pH larutan HCl 0,01 M adalah...',
+    pilihan: ['2', '1', '12', '3'],
+    jawabanBenar: 0,
+    hint: 'HCl asam kuat, [H⁺] = 0,01 M = 10⁻² M. pH = -log[H⁺].',
+    hadiah: 40
+  },
+  {
+    id: 10, stage: 2, kelas: 'XI', materi: 'Larutan Penyangga',
+    pertanyaan: 'Campuran CH₃COOH dengan CH₃COONa merupakan larutan...',
+    pilihan: ['Penyangga asam', 'Penyangga basa', 'Garam hidrolisis', 'Asam kuat'],
+    jawabanBenar: 0,
+    hint: 'Asam lemah + basa konjugasinya = penyangga asam. pH < 7.',
+    hadiah: 50
+  },
+
+  /* ---- STAGE 3 : KELAS XII ---- */
+  {
+    id: 11, stage: 3, kelas: 'XII', materi: 'Sifat Koligatif',
+    pertanyaan: 'Larutan berikut yang memiliki titik didih paling tinggi (konsentrasi sama) adalah...',
+    pilihan: ['NaCl 0,1 M', 'Glukosa 0,1 M', 'Urea 0,1 M', 'Sukrosa 0,1 M'],
+    jawabanBenar: 0,
+    hint: 'NaCl elektrolit yang terurai menjadi 2 ion (Na⁺ dan Cl⁻) sehingga faktor van\u2019t Hoff i = 2. ΔTb lebih besar.',
+    hadiah: 60
+  },
+  {
+    id: 12, stage: 3, kelas: 'XII', materi: 'Redoks',
+    pertanyaan: 'Bilangan oksidasi Mn dalam KMnO₄ adalah...',
+    pilihan: ['+7', '+4', '+2', '+6'],
+    jawabanBenar: 0,
+    hint: 'K = +1, O = -2 (×4 = -8). Muatan total netral 0, maka bilangan oksidasi Mn = +7.',
+    hadiah: 70
+  },
+  {
+    id: 13, stage: 3, kelas: 'XII', materi: 'Elektrolisis',
+    pertanyaan: 'Elektrolisis larutan NaCl dengan elektroda karbon menghasilkan gas di katoda yaitu...',
+    pilihan: ['H₂', 'Cl₂', 'O₂', 'Na'],
+    jawabanBenar: 0,
+    hint: 'Di katoda terjadi reduksi. Karena Na⁺ sulit direduksi, air yang tereduksi menghasilkan gas H₂.',
+    hadiah: 80
+  },
+  {
+    id: 14, stage: 3, kelas: 'XII', materi: 'Kimia Unsur',
+    pertanyaan: 'Unsur halogen yang paling reaktif adalah...',
+    pilihan: ['F (Fluor)', 'Cl (Klor)', 'Br (Brom)', 'I (Iodin)'],
+    jawabanBenar: 0,
+    hint: 'Dalam golongan halogen, keelektronegatifan dan kereaktifan meningkat dari bawah ke atas. F paling reaktif.',
+    hadiah: 90
+  },
+  {
+    id: 15, stage: 3, kelas: 'XII', materi: 'Biomolekul',
+    pertanyaan: 'Ikatan peptida menghubungkan monomer-monomer pada senyawa...',
+    pilihan: [
+      'Protein (dari asam amino)',
+      'Karbohidrat (dari monosakarida)',
+      'Lemak (dari asam lemak dan gliserol)',
+      'Asam nukleat (dari nukleotida)'
+    ],
+    jawabanBenar: 0,
+    hint: 'Ikatan peptida = ikatan amida antara gugus -COOH dan -NH₂ dari dua asam amino.',
+    hadiah: 100
+  }
+];
+
+/* ============ STATE GLOBAL ============ */
+const state = {
+  playerName: '',
+  currentIdx: 0,
+  score: 0,
+  stageTercapai: 0,
+  soalBenar: 0,
+  lifelinesUsed: { fifty: false, guru: false, poll: false },
+  lifelinesThisGame: [],
+  answered: false,
+  timerInterval: null,
+  timeLeft: TIMER_DETIK,
+  startTime: null,
+  endTime: null,
+  questions: [],
+  soundEnabled: true
+};
+
+/* ============ UTIL ============ */
+const $ = (sel) => document.querySelector(sel);
+
+/* Format nilai: "Nilai: X / 100" */
+function formatNilai(n) {
+  return 'Nilai: ' + n + ' / 100';
+}
+
+/* Fisher-Yates shuffle */
+function shuffleArray(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+/* ============ ACak POSISI PILIHAN JAWABAN ============
+   Mengacak urutan pilihan A/B/C/D pada tiap soal sekaligus
+   memperbarui index jawabanBenar agar tetap menunjuk pada
+   jawaban yang benar. */
+function shuffleQuestionOptions(q) {
+  const indices = [0, 1, 2, 3];
+  const shuffled = shuffleArray(indices);
+  const newPilihan = shuffled.map((i) => q.pilihan[i]);
+  const newJawabanBenar = shuffled.indexOf(q.jawabanBenar);
+
+  return Object.assign({}, q, {
+    pilihan: newPilihan,
+    jawabanBenar: newJawabanBenar
+  });
+}
+
+/* ============ TOAST ============ */
+let toastTimer = null;
+function showToast(msg, isError) {
+  const el = $('#toast');
+  el.textContent = msg;
+  el.classList.toggle('error', !!isError);
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2000);
+}
+
+/* ============ AUDIO (Web Audio API) ============ */
+let audioCtx = null;
+function getAudioCtx() {
+  if (!audioCtx) {
+    try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+    catch (e) { audioCtx = null; }
+  }
+  return audioCtx;
+}
+
+function playTone(freq, duration, type, gainValue) {
+  const ctx = getAudioCtx();
+  if (!ctx) return;
+  if (ctx.state === 'suspended') ctx.resume();
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = type || 'sine';
+  osc.frequency.value = freq;
+  gain.gain.setValueAtTime(0, ctx.currentTime);
+  gain.gain.linearRampToValueAtTime(gainValue || 0.15, ctx.currentTime + 0.02);
+  gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
+  osc.connect(gain).connect(ctx.destination);
+  osc.start();
+  osc.stop(ctx.currentTime + duration);
+}
+
+function playDing() {
+  playTone(880, 0.15, 'sine', 0.18);
+  setTimeout(() => playTone(1320, 0.25, 'sine', 0.15), 90);
+}
+function playBuzz() {
+  playTone(180, 0.35, 'sawtooth', 0.12);
+  setTimeout(() => playTone(120, 0.45, 'sawtooth', 0.12), 160);
+}
+function playClick() {
+  playTone(600, 0.06, 'square', 0.08);
+}
+function playWin() {
+  const notes = [523, 659, 784, 1047, 1319];
+  notes.forEach((n, i) => setTimeout(() => playTone(n, 0.25, 'sine', 0.14), i * 110));
+}
+
+/* =====================================================================
+   THREE.JS — BACKGROUND MOLEKUL BERPUTAR
+   ===================================================================== */
+function initThreeBackground() {
+  if (typeof THREE === 'undefined') return;
+
+  const canvas = document.getElementById('bg-canvas');
+  const renderer = new THREE.WebGLRenderer({
+    canvas: canvas,
+    alpha: true,
+    antialias: true
+  });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+
+  const scene = new THREE.Scene();
+  scene.fog = new THREE.FogExp2(0x0a1128, 0.045);
+
+  const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 200);
+  camera.position.z = 14;
+
+  /* Cahaya */
+  scene.add(new THREE.AmbientLight(0xffffff, 0.55));
+  const light1 = new THREE.PointLight(0xf4c430, 1.6, 60);
+  light1.position.set(10, 12, 10);
+  scene.add(light1);
+  const light2 = new THREE.PointLight(0x4fc3f7, 1.2, 60);
+  light2.position.set(-12, -8, 8);
+  scene.add(light2);
+  const light3 = new THREE.PointLight(0xffffff, 0.8, 60);
+  light3.position.set(0, -10, 12);
+  scene.add(light3);
+
+  /* Palet warna */
+  const PALETTE = [0xf4c430, 0x4fc3f7, 0xffffff, 0xe63946, 0x9d4edd];
+
+  /* Buat beberapa grup "molekul" */
+  const molecules = [];
+  const moleculeCount = 7;
+
+  for (let m = 0; m < moleculeCount; m++) {
+    const group = new THREE.Group();
+    const atomCount = 3 + Math.floor(Math.random() * 3);
+    const baseColor = PALETTE[m % PALETTE.length];
+
+    /* Atom pusat */
+    const centralGeo = new THREE.SphereGeometry(0.45, 20, 20);
+    const centralMat = new THREE.MeshPhongMaterial({
+      color: baseColor,
+      emissive: baseColor,
+      emissiveIntensity: 0.45,
+      shininess: 80
+    });
+    const central = new THREE.Mesh(centralGeo, centralMat);
+    group.add(central);
+
+    /* Atom cabang + ikatan */
+    for (let i = 0; i < atomCount; i++) {
+      const angle = (i / atomCount) * Math.PI * 2 + Math.random() * 0.5;
+      const radius = 1.5 + Math.random() * 0.6;
+      const pos = new THREE.Vector3(
+        Math.cos(angle) * radius,
+        Math.sin(angle) * radius,
+        (Math.random() - 0.5) * 0.8
+      );
+
+      const aGeo = new THREE.SphereGeometry(0.24 + Math.random() * 0.1, 16, 16);
+      const aMat = new THREE.MeshPhongMaterial({
+        color: PALETTE[(m + i + 1) % PALETTE.length],
+        emissive: 0x111111,
+        shininess: 100
+      });
+      const atom = new THREE.Mesh(aGeo, aMat);
+      atom.position.copy(pos);
+      group.add(atom);
+
+      const bondLength = pos.length();
+      const bGeo = new THREE.CylinderGeometry(0.045, 0.045, bondLength, 8);
+      const bMat = new THREE.MeshBasicMaterial({
+        color: 0xf4c430,
+        transparent: true,
+        opacity: 0.55
+      });
+      const bond = new THREE.Mesh(bGeo, bMat);
+      bond.position.copy(pos).multiplyScalar(0.5);
+      const axis = new THREE.Vector3(0, 1, 0);
+      const dir = pos.clone().normalize();
+      const quat = new THREE.Quaternion().setFromUnitVectors(axis, dir);
+      bond.quaternion.copy(quat);
+      group.add(bond);
+    }
+
+    group.position.set(
+      (Math.random() - 0.5) * 22,
+      (Math.random() - 0.5) * 22,
+      (Math.random() - 0.5) * 14 - 4
+    );
+
+    group.userData.speedX = (Math.random() * 0.4 + 0.15) * (Math.random() > 0.5 ? 1 : -1);
+    group.userData.speedY = (Math.random() * 0.5 + 0.15) * (Math.random() > 0.5 ? 1 : -1);
+    group.userData.floatSpeed = Math.random() * 0.6 + 0.4;
+    group.userData.floatPhase = Math.random() * Math.PI * 2;
+    group.userData.baseY = group.position.y;
+
+    scene.add(group);
+    molecules.push(group);
+  }
+
+  /* Partikel debu emas kecil */
+  const particleCount = 200;
+  const particleGeo = new THREE.BufferGeometry();
+  const particlePositions = new Float32Array(particleCount * 3);
+  for (let i = 0; i < particleCount * 3; i++) {
+    particlePositions[i] = (Math.random() - 0.5) * 40;
+  }
+  particleGeo.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
+  const particleMat = new THREE.PointsMaterial({
+    color: 0xf4c430,
+    size: 0.07,
+    transparent: true,
+    opacity: 0.55,
+    sizeAttenuation: true
+  });
+  const particles = new THREE.Points(particleGeo, particleMat);
+  scene.add(particles);
+
+  /* Animasi */
+  let t = 0;
+  function animate() {
+    requestAnimationFrame(animate);
+    t += 0.016;
+
+    molecules.forEach((m) => {
+      m.rotation.x += 0.0035 * m.userData.speedX;
+      m.rotation.y += 0.0045 * m.userData.speedY;
+      m.position.y = m.userData.baseY + Math.sin(t * m.userData.floatSpeed + m.userData.floatPhase) * 0.7;
+    });
+
+    particles.rotation.y += 0.0006;
+    particles.rotation.x += 0.0003;
+
+    renderer.render(scene, camera);
+  }
+  animate();
+
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+}
+
+/* =====================================================================
+   STORAGE (localStorage JSON)
+   ===================================================================== */
+function loadData() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch (e) {
+    console.warn('Gagal membaca localStorage:', e);
+    return null;
+  }
+}
+
+function saveData(data) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch (e) {
+    console.warn('Gagal menyimpan localStorage:', e);
+  }
+}
+
+function getData() {
+  let data = loadData();
+  if (!data || !Array.isArray(data.soal) || data.soal.length < 15) {
+    data = {
+      versi: VERSION,
+      guru: GURU,
+      mapel: MAPEL,
+      soal: DEFAULT_QUESTIONS.slice(),
+      riwayat: (data && Array.isArray(data.riwayat)) ? data.riwayat : []
+    };
+    saveData(data);
+  }
+  return data;
+}
+
+function addRiwayat(entry) {
+  const data = getData();
+  data.riwayat.push(entry);
+  if (data.riwayat.length > 50) {
+    data.riwayat = data.riwayat.slice(-50);
+  }
+  saveData(data);
+}
+
+function exportJSON() {
+  const data = getData();
+  const tanggal = new Date().toISOString().slice(0, 10);
+  const namaFile = 'hasil-kuis-kimia-' + tanggal + '.json';
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = namaFile;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 500);
+  showToast('✅ File ' + namaFile + ' diunduh');
+}
+
+/* =====================================================================
+   NAVIGASI HALAMAN
+   ===================================================================== */
+function showPage(id) {
+  document.querySelectorAll('.page').forEach((p) => p.classList.remove('active'));
+  const target = document.getElementById(id);
+  if (target) target.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* =====================================================================
+   GAME LOGIC
+   ===================================================================== */
+function getCurrentQuestion() {
+  return state.questions[state.currentIdx];
+}
+
+/* Nilai aman (safety net) */
+function getSafetyNet(idx) {
+  if (idx < 5) return 0;
+  if (idx < 10) return 10;   /* nilai aman setelah Stage 1 */
+  return 50;                  /* nilai aman setelah Stage 2 */
+}
+
+function getStageFromIndex(idx) {
+  if (idx < 5) return 1;
+  if (idx < 10) return 2;
+  return 3;
+}
+
+function getStageName(stage) {
+  if (stage === 1) return 'STAGE 1 • DASAR';
+  if (stage === 2) return 'STAGE 2 • MENENGAH';
+  return 'STAGE 3 • MAHIR';
+}
+
+function startGame() {
+  const namaInput = $('#input-nama');
+  const nama = (namaInput.value || '').trim();
+
+  if (!nama) {
+    showToast('⚠️ Tulis nama terlebih dahulu!', true);
+    namaInput.focus();
+    return;
+  }
+
+  state.playerName = nama;
+  state.currentIdx = 0;
+  state.score = 0;
+  state.stageTercapai = 0;
+  state.soalBenar = 0;
+  state.lifelinesUsed = { fifty: false, guru: false, poll: false };
+  state.lifelinesThisGame = [];
+  state.answered = false;
+  state.timeLeft = TIMER_DETIK;
+  state.startTime = new Date().toISOString();
+  state.endTime = null;
+
+  const data = getData();
+  /* Load soal urut id, lalu ACak posisi pilihan A/B/C/D tiap soal */
+  state.questions = data.soal
+    .slice()
+    .sort((a, b) => a.id - b.id)
+    .map((q) => shuffleQuestionOptions(q));
+
+  playClick();
+  showPage('page-quiz');
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = getCurrentQuestion();
+  if (!q) { endGame(true); return; }
+
+  state.answered = false;
+  state.timeLeft = TIMER_DETIK;
+
+  const stage = getStageFromIndex(state.currentIdx);
+  $('#stage-label').textContent = getStageName(stage);
+  $('#progress-fill').style.width = ((state.currentIdx / 15) * 100).toFixed(1) + '%';
+
+  $('#q-number').textContent = 'Soal ' + (state.currentIdx + 1) + ' / 15';
+  $('#prize-current').textContent = formatNilai(HADIAH[state.currentIdx]);
+
+  $('#question-materi').textContent = q.materi.toUpperCase();
+  $('#question-text').textContent = q.pertanyaan;
+
+  $('#hint-box').style.display = 'none';
+  $('#hint-text').textContent = '';
+
+  const llFifty = $('#ll-fifty');
+  const llGuru = $('#ll-guru');
+  const llPoll = $('#ll-poll');
+  llFifty.classList.toggle('used', state.lifelinesUsed.fifty);
+  llGuru.classList.toggle('used', state.lifelinesUsed.guru);
+  llPoll.classList.toggle('used', state.lifelinesUsed.poll);
+
+  const answersBox = $('#answers');
+  answersBox.innerHTML = '';
+  const letters = ['A', 'B', 'C', 'D'];
+
+  q.pilihan.forEach((teks, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'answer-btn';
+    btn.dataset.idx = idx;
+    btn.innerHTML =
+      '<span class="inner">' +
+        '<span class="letter">' + letters[idx] + '.</span>' +
+        '<span class="text">' + teks + '</span>' +
+      '</span>';
+    btn.addEventListener('click', () => onAnswerClick(idx));
+    answersBox.appendChild(btn);
+  });
+
+  startTimer();
+}
+
+function startTimer() {
+  stopTimer();
+  updateTimerUI();
+  state.timerInterval = setInterval(() => {
+    state.timeLeft--;
+    updateTimerUI();
+    if (state.timeLeft <= 0) {
+      stopTimer();
+      if (!state.answered) onTimeout();
+    }
+  }, 1000);
+}
+
+function stopTimer() {
+  if (state.timerInterval) {
+    clearInterval(state.timerInterval);
+    state.timerInterval = null;
+  }
+}
+
+function updateTimerUI() {
+  const badge = $('#timer-badge');
+  const text = $('#timer-text');
+  text.textContent = state.timeLeft;
+  badge.classList.toggle('danger', state.timeLeft <= 10);
+}
+
+function onAnswerClick(idx) {
+  if (state.answered) return;
+  state.answered = true;
+  stopTimer();
+
+  const q = getCurrentQuestion();
+  const buttons = document.querySelectorAll('.answer-btn');
+  const isCorrect = (idx === q.jawabanBenar);
+
+  buttons.forEach((btn) => {
+    btn.disabled = true;
+    const bIdx = parseInt(btn.dataset.idx, 10);
+    if (bIdx === q.jawabanBenar) btn.classList.add('correct');
+    else if (bIdx === idx) btn.classList.add('wrong');
+  });
+
+  if (isCorrect) {
+    playDing();
+    state.soalBenar++;
+    state.score = HADIAH[state.currentIdx];
+    state.stageTercapai = getStageFromIndex(state.currentIdx);
+    setTimeout(() => {
+      state.currentIdx++;
+      if (state.currentIdx >= 15) {
+        endGame(true);
+      } else {
+        renderQuestion();
+      }
+    }, 1500);
+  } else {
+    playBuzz();
+    state.score = getSafetyNet(state.currentIdx);
+    setTimeout(() => endGame(false), 2200);
+  }
+}
+
+function onTimeout() {
+  if (state.answered) return;
+  state.answered = true;
+
+  const q = getCurrentQuestion();
+  const buttons = document.querySelectorAll('.answer-btn');
+  buttons.forEach((btn) => {
+    btn.disabled = true;
+    const bIdx = parseInt(btn.dataset.idx, 10);
+    if (bIdx === q.jawabanBenar) btn.classList.add('correct');
+  });
+
+  playBuzz();
+  showToast('⏰ Waktu habis!', true);
+  state.score = getSafetyNet(state.currentIdx);
+  setTimeout(() => endGame(false), 2200);
+}
+
+function endGame(menang) {
+  stopTimer();
+  state.endTime = new Date().toISOString();
+
+  if (menang) {
+    state.score = 100;   /* nilai sempurna */
+    state.soalBenar = 15;
+    state.stageTercapai = 3;
+    playWin();
+  }
+
+  const entry = {
+    nama: state.playerName,
+    skor: state.score,
+    stageTercapai: menang ? 3 : getStageFromIndex(state.currentIdx),
+    soalBenar: state.soalBenar,
+    soalTerjawab: state.currentIdx + (state.answered ? 1 : 0),
+    waktuMulai: state.startTime,
+    waktuSelesai: state.endTime,
+    lifelineDipakai: state.lifelinesThisGame.slice()
+  };
+  addRiwayat(entry);
+
+  renderResult(entry, menang);
+  showPage('page-result');
+}
+
+function renderResult(entry, menang) {
+  const emoji = menang ? '🏆' : (state.soalBenar >= 10 ? '🎉' : (state.soalBenar >= 5 ? '👍' : '💪'));
+  $('#result-emoji').textContent = emoji;
+
+  const statusEl = $('#result-status');
+  if (menang) {
+    statusEl.textContent = 'ANDA JUARA KIMIA!';
+    statusEl.classList.remove('lose');
+  } else {
+    statusEl.textContent = 'PERMAINAN BERAKHIR';
+    statusEl.classList.add('lose');
+  }
+
+  $('#result-name-label').textContent = (entry.nama || '').toUpperCase();
+  $('#result-score').textContent = entry.skor + ' / 100';
+  $('#stat-benar').textContent = entry.soalBenar + '/15';
+  $('#stat-stage').textContent = (menang ? 3 : getStageFromIndex(state.currentIdx)) + '/3';
+
+  const t0 = new Date(entry.waktuMulai).getTime();
+  const t1 = new Date(entry.waktuSelesai).getTime();
+  const detik = Math.max(0, Math.round((t1 - t0) / 1000));
+  const menit = Math.floor(detik / 60);
+  const sisa = detik % 60;
+  $('#stat-waktu').textContent = menit + ':' + String(sisa).padStart(2, '0');
+
+  $('#stat-lifeline').textContent = entry.lifelineDipakai.length + '/3';
+
+  renderRanking();
+}
+
+function renderRanking() {
+  const data = getData();
+  const list = data.riwayat.slice().sort((a, b) => b.skor - a.skor).slice(0, 5);
+  const box = $('#ranking-list');
+  if (!list.length) {
+    box.innerHTML = '<div class="rank-empty">Belum ada riwayat.</div>';
+    return;
+  }
+  box.innerHTML = '';
+  list.forEach((r, i) => {
+    const row = document.createElement('div');
+    row.className = 'rank-row';
+    row.innerHTML =
+      '<span class="rank-no">' + (i + 1) + '.</span>' +
+      '<span class="rank-name">' + escapeHtml(r.nama) + '</span>' +
+      '<span class="rank-score">' + r.skor + ' / 100</span>';
+    box.appendChild(row);
+  });
+}
+
+function escapeHtml(str) {
+  return String(str).replace(/[&<>"']/g, (s) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  })[s]);
+}
+
+/* =====================================================================
+   LIFELINES
+   ===================================================================== */
+function useFiftyFifty() {
+  if (state.lifelinesUsed.fifty || state.answered) return;
+  state.lifelinesUsed.fifty = true;
+  state.lifelinesThisGame.push('50:50');
+
+  const q = getCurrentQuestion();
+  const salah = [0, 1, 2, 3].filter((i) => i !== q.jawabanBenar);
+  const dihapus = shuffleArray(salah).slice(0, 2);
+
+  const buttons = document.querySelectorAll('.answer-btn');
+  buttons.forEach((btn) => {
+    const bIdx = parseInt(btn.dataset.idx, 10);
+    if (dihapus.indexOf(bIdx) !== -1) {
+      btn.classList.add('dim');
+      btn.disabled = true;
+    }
+  });
+
+  $('#ll-fifty').classList.add('used');
+  playClick();
+  showToast('🎯 50:50 dipakai!');
+}
+
+function useGuru() {
+  if (state.lifelinesUsed.guru || state.answered) return;
+  state.lifelinesUsed.guru = true;
+  state.lifelinesThisGame.push('Tanya Guru');
+
+  const q = getCurrentQuestion();
+  $('#hint-text').textContent = q.hint || 'Tidak ada petunjuk untuk soal ini.';
+  $('#hint-box').style.display = 'block';
+  $('#ll-guru').classList.add('used');
+  playClick();
+  showToast('👨‍🏫 Petunjuk guru ditampilkan');
+}
+
+function usePoll() {
+  if (state.lifelinesUsed.poll || state.answered) return;
+  state.lifelinesUsed.poll = true;
+  state.lifelinesThisGame.push('Audience Poll');
+
+  const q = getCurrentQuestion();
+  const idxBenar = q.jawabanBenar;
+
+  const pctBenar = 55 + Math.floor(Math.random() * 20);
+  let sisa = 100 - pctBenar;
+
+  const sisaParts = [];
+  for (let i = 0; i < 3; i++) {
+    if (i === 2) { sisaParts.push(sisa); break; }
+    const max = sisa - (2 - i);
+    const p = 1 + Math.floor(Math.random() * Math.max(1, max));
+    sisaParts.push(p);
+    sisa -= p;
+  }
+
+  const lainIdx = shuffleArray([0, 1, 2, 3].filter((i) => i !== idxBenar));
+  const persen = {};
+  persen[idxBenar] = pctBenar;
+  lainIdx.forEach((idx, i) => { persen[idx] = sisaParts[i]; });
+
+  const box = $('#poll-bars');
+  box.innerHTML = '';
+  const letters = ['A', 'B', 'C', 'D'];
+  const maxPct = Math.max.apply(null, Object.values(persen));
+
+  [0, 1, 2, 3].forEach((i) => {
+    const pct = persen[i];
+    const row = document.createElement('div');
+    row.className = 'poll-row';
+    row.innerHTML =
+      '<span class="poll-label">' + letters[i] + '</span>' +
+      '<span class="poll-bar-wrap"><span class="poll-bar' +
+        (pct === maxPct ? ' top' : '') + '" data-pct="' + pct + '"></span></span>' +
+      '<span class="poll-pct">' + pct + '%</span>';
+    box.appendChild(row);
+  });
+
+  $('#poll-modal').classList.add('active');
+
+  setTimeout(() => {
+    document.querySelectorAll('#poll-bars .poll-bar').forEach((b) => {
+      b.style.width = b.dataset.pct + '%';
+    });
+  }, 80);
+
+  $('#ll-poll').classList.add('used');
+  playClick();
+}
+
+/* =====================================================================
+   EVENT LISTENERS
+   ===================================================================== */
+function bindEvents() {
+  $('#btn-mulai').addEventListener('click', () => {
+    playClick();
+    startGame();
+  });
+
+  $('#input-nama').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      startGame();
+    }
+  });
+
+  $('#btn-unduh-home').addEventListener('click', exportJSON);
+
+  $('#ll-fifty').addEventListener('click', useFiftyFifty);
+  $('#ll-guru').addEventListener('click', useGuru);
+  $('#ll-poll').addEventListener('click', usePoll);
+
+  $('#poll-close').addEventListener('click', () => {
+    $('#poll-modal').classList.remove('active');
+  });
+  $('#poll-modal').addEventListener('click', (e) => {
+    if (e.target.id === 'poll-modal') $('#poll-modal').classList.remove('active');
+  });
+
+  $('#btn-main-lagi').addEventListener('click', () => {
+    playClick();
+    const namaLama = state.playerName;
+    $('#input-nama').value = namaLama || '';
+    showPage('page-home');
+  });
+
+  $('#btn-unduh-result').addEventListener('click', exportJSON);
+}
+
+/* =====================================================================
+   INIT
+   ===================================================================== */
+function init() {
+  initThreeBackground();
+  bindEvents();
+  getData();
+  const data = getData();
+  if (data.riwayat && data.riwayat.length) {
+    const last = data.riwayat[data.riwayat.length - 1];
+    if (last && last.nama) $('#input-nama').value = last.nama;
+  }
+  console.log('✅ Juara Kimia v' + VERSION + ' siap. Guru: ' + GURU);
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
+</script>
+</body>
+</html>
